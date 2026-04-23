@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,10 +9,26 @@ import java.util.Comparator;
 
 public class LeaderBoard { // bang xep hang
     List <Player> players = new ArrayList<Player>();
-    
+    private final String FILE_NAME = "leaderboard.txt";
+
+    public LeaderBoard(){
+        loadFromFile();
+    }
     public void addPlayer(Player player){
+        players.removeIf(p -> p.getName().equalsIgnoreCase(player.getName()) && player.getHighscore() > p.getHighscore());
+
+        boolean exists = false;
+        for (Player p : players){
+            if(p.getName().equalsIgnoreCase(player.getName())){
+                exists = true;
+                break;
+            }
+        }
+        if (!exists || player.getHighscore() > 0){
         players.add(player);
+    }
         sortLeaderboard();
+        saveToFile();
     }
 
     public void sortLeaderboard(){
@@ -27,6 +44,38 @@ public class LeaderBoard { // bang xep hang
         System.out.printf("%-20s | %s\n ", "Player", "Score");
         for (Player player : players){
             System.out.printf("%-20s | %d\n", player.getName(), player.getHighscore());
+        }
+    }
+
+    private void saveToFile(){
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))){
+            for (Player p : players){
+                writer.write(p.getName() + "|" + p.getHighscore());
+                writer.newLine();
+            }
+        } catch (IOException e){
+            System.out.println("ERROR" + e.getMessage());
+        }
+    }
+
+    private void loadFromFile(){
+        File file = new File(FILE_NAME);
+        if (!file.exists()) return;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))){
+            String line;
+            players.clear();
+            while ((line = reader.readLine()) != null){
+                String[] parts = line.split("\\|");
+                if (parts.length == 2){
+                    String name = parts[0];
+                    int score = Integer.parseInt(parts[1]);
+                    players.add(new Player(name, score, score));
+                }
+            }
+            sortLeaderboard();
+        } catch (IOException | NumberFormatException e){
+            System.out.println("ERROR" + e.getMessage());
         }
     }
 }
@@ -93,7 +142,34 @@ class LeaderBoardScreen extends JPanel{
         userRankPanel.setBackground(new Color(40, 40, 40));
         userRankPanel.setPreferredSize(new Dimension(0, 50));
         userRankPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.WHITE));
+        String currentPlayerName = ""; 
 
+        int currentPlayerScore = 0;
+        int currentRank = -1;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("user_setting.txt"))) {
+            currentPlayerName = reader.readLine();
+        } catch (IOException e) {
+            currentPlayerName = "Player";
+        }
+
+        for (int i = 0; i < lbLogic.players.size(); i++) {
+            if (lbLogic.players.get(i).getName().equalsIgnoreCase(currentPlayerName)) {
+                currentRank = i + 1;
+                currentPlayerScore = lbLogic.players.get(i).getHighscore();
+                break;
+            }
+        }
+
+        if (currentRank != -1) {
+            userRankPanel.add(createLabel("YOU: #" + currentRank, Font.BOLD, Color.GREEN));
+            userRankPanel.add(createLabel(currentPlayerName, Font.BOLD, Color.GREEN));
+            userRankPanel.add(createLabel(String.valueOf(currentPlayerScore), Font.BOLD, Color.GREEN));
+        } else {
+            userRankPanel.add(createLabel("-", Font.PLAIN, Color.GRAY));
+            userRankPanel.add(createLabel(currentPlayerName, Font.PLAIN, Color.GRAY));
+            userRankPanel.add(createLabel("No Score", Font.PLAIN, Color.GRAY));
+        }
         mainBox.add(userRankPanel, BorderLayout.SOUTH);
 
         gbc.gridx = 1; gbc.gridy = 0;

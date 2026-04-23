@@ -1,6 +1,7 @@
 
 import javax.swing.*;
 import java.util.Random;
+import java.io.*;
 
 
 class GameManage{ // random Tetromino, xoa khoi(hang ngang du 10 o)
@@ -13,29 +14,45 @@ class GameManage{ // random Tetromino, xoa khoi(hang ngang du 10 o)
 
     private int score = 0;
     private int lines = 0;
-
-    public int getScore(){
-        return score;
-    }
-    public int getLines(){
-        return lines;
-    }
+    private final String CONFIG_FILE = "user_setting.txt";
 
     private Random random = new Random();
-
     private LeaderBoard leaderBoard;
 
     public GameManage(Board board, LeaderBoard leaderBoard, GameScreen gameScreen){
         this.board = board;
         this.leaderBoard = leaderBoard;
         this.gameScreen = gameScreen;
+        loadPlayerName();
 
-        Name = JOptionPane.showInputDialog("ENTER YOUR NAME");
-        if(Name == null || Name.isEmpty()){
+        if(Name == null || Name.isEmpty() || Name.equals("Player")){
+            Name = JOptionPane.showInputDialog("ENTER YOUR NAME");
+            if (Name == null || Name.isEmpty()){
             Name = "Player";
         }
+        savePlayerName();
+    }
         spawnNewTetromino();
         startGameLoop();
+}
+
+    private void savePlayerName(){
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(CONFIG_FILE))){
+            writer.write(Name);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void loadPlayerName(){
+        File file = new File(CONFIG_FILE);
+        if (file.exists()){
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))){
+                Name = reader.readLine();
+            } catch (IOException e){
+                Name = "Unknown Player";
+            }
+        }
     }
 
     private void startGameLoop(){
@@ -123,8 +140,21 @@ class GameManage{ // random Tetromino, xoa khoi(hang ngang du 10 o)
         isGameOver = true;
         timer.stop();
 
-        Player p = new Player(Name, score, score);
-        leaderBoard.addPlayer(p);
+        boolean update = false;
+        for(Player p : leaderBoard.players){
+            if ( p.getName().equalsIgnoreCase(Name)){
+                if(score > p.getHighscore()){
+                    leaderBoard.players.remove(p);
+                    leaderBoard.addPlayer(new Player(Name, score, score));
+                }
+                update = true;
+                break;
+            }
+        }
+        if (!update){
+            Player p = new Player(Name, score, score);
+            leaderBoard.addPlayer(p);
+        }
 
         int choice = JOptionPane.showConfirmDialog(board,
             "GAME OVER!!\nSCORE: " + score + "\nRETRY?",
@@ -135,20 +165,26 @@ class GameManage{ // random Tetromino, xoa khoi(hang ngang du 10 o)
             } 
         }
 
-            public void resetGame(){
-                for (int r = 0; r < Board.ROWS; r++){
-                    for (int c = 0; c < Board.COLUMNS; c++){
-                        board.grid[r][c] = null;
-                    }
+        public void resetGame(){
+            for (int r = 0; r < Board.ROWS; r++){
+                for (int c = 0; c < Board.COLUMNS; c++){
+                    board.grid[r][c] = null;
                 }
-                score = 0;
-                lines = 0;
-                isGameOver = false;
-                spawnNewTetromino();
-                timer.start();
+            }
+            score = 0;
+            lines = 0;
+            isGameOver = false;
+            spawnNewTetromino();
+            timer.start();
             }
 
-            public void togglePause(){
+        public void togglePause(){
             isPause = !isPause;
+            if(isPause){
+                timer.stop();
+            }else{
+                timer.start();
+            }
         }
+
     }
