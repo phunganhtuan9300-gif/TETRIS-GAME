@@ -7,9 +7,11 @@ import java.awt.*;
     private JLabel linesLabel;
 
     public void updateScore(int score, int lines){
+        SwingUtilities.invokeLater(()->{
         scoreLabel.setText(String.valueOf(score));
         linesLabel.setText(String.valueOf(lines));
-    }
+    });
+}
 
     public GameScreen(CardLayout card, JPanel parent, LeaderBoard lb) {
         setLayout(new GridBagLayout());

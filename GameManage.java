@@ -174,6 +174,8 @@ class GameManage{ // random Tetromino, xoa khoi(hang ngang du 10 o)
             score = 0;
             lines = 0;
             isGameOver = false;
+            updateLabels();
+            board.repaint();
             spawnNewTetromino();
             timer.start();
             }
