@@ -5,12 +5,18 @@ import java.awt.*;
     public class StartMenu extends JPanel{
     private LeaderBoard lbLogic;
     private GameScreen gameScreen;
+    private LeaderBoardScreen leaderboardScreen;
+    private CardLayout card;
+    private JPanel parent;
 
-    public StartMenu(CardLayout card, JPanel parent, LeaderBoard lbLogic, GameScreen gameScreen) {
-        setLayout(new GridBagLayout());
-        setBackground(new Color(30, 144, 255));
+    public StartMenu(CardLayout card, JPanel parent, LeaderBoard lbLogic, GameScreen gameScreen, LeaderBoardScreen leaderboardScreen) {
+        this.parent = parent;
+        this.card = card;
         this.lbLogic = lbLogic;
         this.gameScreen = gameScreen;
+        this.leaderboardScreen = leaderboardScreen;
+        setLayout(new GridBagLayout());
+        setBackground(new Color(30, 144, 255));
 
         JPanel box = new JPanel();
         box.setLayout(new BoxLayout(box, BoxLayout.Y_AXIS));
@@ -52,8 +58,10 @@ import java.awt.*;
         });
 
         leaderboard.addActionListener(e -> {
+            leaderboardScreen.refreshTable();
             card.show(parent, "LEADERBOARD");
         });
     }
 }
+
 

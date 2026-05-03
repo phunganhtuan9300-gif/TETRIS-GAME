@@ -92,7 +92,8 @@ class LeaderBoardScreen extends JPanel{
         refreshTable();
     }
 
-        public void refreshTable(){
+    public void refreshTable(){
+        this.removeAll();
         setLayout(new GridBagLayout());
         setBackground(new Color(30, 144, 255));
 
@@ -193,7 +194,11 @@ class LeaderBoardScreen extends JPanel{
         gbc.gridx = 2; 
         gbc.weightx = 0.1;
         add(Box.createHorizontalGlue(), gbc);
+        
+        this.revalidate();
+        this.repaint();
     }
+
         private JLabel createLabel(String text, int style, Color color) {
         JLabel label = new JLabel(text, SwingConstants.CENTER);
         label.setForeground(color);
