@@ -10,9 +10,12 @@ public class Tetris {
         JPanel container = new JPanel(card);
 
         LeaderBoard lbLogic = new LeaderBoard();
-
-        StartMenu startMenu = new StartMenu(card, container, lbLogic);
+        
         GameScreen gameScreen = new GameScreen(card, container, lbLogic);
+
+        StartMenu startMenu = new StartMenu(card, container, lbLogic, gameScreen);
+        
+
         LeaderBoardScreen leaderboardScreen = new LeaderBoardScreen(card, container, lbLogic);
 
         container.add(startMenu, "START");

@@ -2,9 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 
     public class GameScreen extends JPanel{
-    private GameManage gameManage;
+    public GameManage gameManage;
     private JLabel scoreLabel;
     private JLabel linesLabel;
+
+    public GameManage getGameManage(){
+        return this.gameManage;
+    }
 
     public void updateScore(int score, int lines){
         SwingUtilities.invokeLater(()->{
@@ -22,8 +26,7 @@ import java.awt.*;
         JButton backBtn = new JButton("BACK");
         backBtn.setFocusable(false);
         backBtn.addActionListener(e -> {
-            gameManage.resetGame();
-            gameManage.togglePause();
+           gameManage.stopGame();
             card.show(parent, "START");
         });
 

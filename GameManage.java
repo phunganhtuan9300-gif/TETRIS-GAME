@@ -56,7 +56,7 @@ class GameManage{ // random Tetromino, xoa khoi(hang ngang du 10 o)
     }
 
     private void startGameLoop(){
-        timer = new Timer(800, e -> update());
+        timer = new Timer(600, e -> update());
         timer.start();
         }
 
@@ -64,8 +64,7 @@ class GameManage{ // random Tetromino, xoa khoi(hang ngang du 10 o)
         if (isPause || isGameOver) return;
         if(board.current == null){
             spawnNewTetromino();
-            return;
-        }   
+        } else {
         if(board.canPlace(board.current, board.current.row + 1, board.current.column)){
             board.current.row++;
         } else {
@@ -73,9 +72,11 @@ class GameManage{ // random Tetromino, xoa khoi(hang ngang du 10 o)
             clearLines();
             board.repaint();
             board.setCurrent(null);
+            spawnNewTetromino();
         }
-        board.repaint();
     }
+     board.repaint();
+}
 
     private void spawnNewTetromino(){
         Tetromino t = new Tetromino(random.nextInt(7));
@@ -174,6 +175,7 @@ class GameManage{ // random Tetromino, xoa khoi(hang ngang du 10 o)
             score = 0;
             lines = 0;
             isGameOver = false;
+            isPause = false;
             updateLabels();
             board.repaint();
             spawnNewTetromino();
@@ -188,5 +190,10 @@ class GameManage{ // random Tetromino, xoa khoi(hang ngang du 10 o)
                 timer.start();
             }
         }
-
+        public void stopGame(){
+        isPause = false;
+        if (timer != null){
+            timer.stop();
+        }
+        }
     }

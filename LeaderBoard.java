@@ -81,7 +81,18 @@ public class LeaderBoard { // bang xep hang
 }
 
 class LeaderBoardScreen extends JPanel{
+    private LeaderBoard lbLogic;
+    private JPanel parent;
+    private CardLayout card;
+
     public LeaderBoardScreen(CardLayout card, JPanel parent, LeaderBoard lbLogic) {
+        this.card = card;
+        this.parent = parent;
+        this.lbLogic = lbLogic;
+        refreshTable();
+    }
+
+        public void refreshTable(){
         setLayout(new GridBagLayout());
         setBackground(new Color(30, 144, 255));
 
@@ -97,6 +108,7 @@ class LeaderBoardScreen extends JPanel{
         gbc.weighty = 1.0;
         gbc.insets = new Insets(10, 10, 0, 0);
         add(backBtn, gbc);
+
 
         JPanel mainBox = new JPanel();
         mainBox.setLayout(new BorderLayout());
@@ -189,3 +201,4 @@ class LeaderBoardScreen extends JPanel{
         return label;
     }
 }
+

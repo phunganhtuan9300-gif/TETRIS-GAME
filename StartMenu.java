@@ -4,10 +4,13 @@ import java.awt.*;
 
     public class StartMenu extends JPanel{
     private LeaderBoard lbLogic;
-    public StartMenu(CardLayout card, JPanel parent, LeaderBoard lbLogic){
+    private GameScreen gameScreen;
+
+    public StartMenu(CardLayout card, JPanel parent, LeaderBoard lbLogic, GameScreen gameScreen) {
         setLayout(new GridBagLayout());
         setBackground(new Color(30, 144, 255));
         this.lbLogic = lbLogic;
+        this.gameScreen = gameScreen;
 
         JPanel box = new JPanel();
         box.setLayout(new BoxLayout(box, BoxLayout.Y_AXIS));
@@ -41,7 +44,13 @@ import java.awt.*;
 
         add(box);
 
-        play.addActionListener(e -> card.show(parent, "GAME"));
+        play.addActionListener(e -> {
+            if (gameScreen.getGameManage() != null){
+                gameScreen.getGameManage().resetGame();
+            }
+            card.show(parent, "GAME");
+        });
+
         leaderboard.addActionListener(e -> {
             card.show(parent, "LEADERBOARD");
         });
