@@ -58,7 +58,7 @@ class GameManage{ // random Tetromino, xoa khoi(hang ngang du 10 o)
     }
 
     private void startGameLoop(){
-        timer = new Timer(600, e -> update());
+        timer = new Timer(800, e -> update());
         timer.start();
         }
 
@@ -113,7 +113,6 @@ class GameManage{ // random Tetromino, xoa khoi(hang ngang du 10 o)
         }
 
         if(clear > 0){
-            int oldLines = lines;
             lines += clear;
 
             int newLevel = lines / 10;
@@ -190,7 +189,7 @@ class GameManage{ // random Tetromino, xoa khoi(hang ngang du 10 o)
             score = 0;
             lines = 0;
             if (timer != null){
-                timer.setDelay(600);
+                timer.setDelay(800);
             }
             isGameOver = false;
             isPause = false;
