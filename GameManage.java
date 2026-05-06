@@ -8,6 +8,8 @@ class GameManage{ // random Tetromino, xoa khoi(hang ngang du 10 o)
     public String Name;
     private Board board;
     public Timer timer;
+    private int level = 0;
+
     private boolean isPause = false;
     private boolean isGameOver = false;
     private GameScreen gameScreen;
@@ -88,7 +90,7 @@ class GameManage{ // random Tetromino, xoa khoi(hang ngang du 10 o)
         board.setCurrent(t);
     }
     private void updateLabels(){
-            gameScreen.updateScore(score, lines);
+            gameScreen.updateScore(score, lines, level);
         }
 
     public void clearLines(){
@@ -111,11 +113,23 @@ class GameManage{ // random Tetromino, xoa khoi(hang ngang du 10 o)
         }
 
         if(clear > 0){
+            int oldLines = lines;
             lines += clear;
-            score += calculateScore(clear);
+
+            int newLevel = lines / 10;
+            if (newLevel > level){
+                level = newLevel;
+                updateGameSpeed();
+            }
+            score += calculateScore(clear) * (level + 1);
             updateLabels();
             board.repaint();
         }
+    }
+
+    private void updateGameSpeed(){
+        int newDelay = Math.max(100, 600 - level * 50);
+        timer.setDelay(newDelay);
     }
 
     private void removeRow(int row){
@@ -172,8 +186,12 @@ class GameManage{ // random Tetromino, xoa khoi(hang ngang du 10 o)
                     board.grid[r][c] = null;
                 }
             }
+            level = 0;
             score = 0;
             lines = 0;
+            if (timer != null){
+                timer.setDelay(600);
+            }
             isGameOver = false;
             isPause = false;
             updateLabels();

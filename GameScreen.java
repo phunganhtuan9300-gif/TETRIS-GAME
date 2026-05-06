@@ -5,13 +5,15 @@ import java.awt.*;
     public GameManage gameManage;
     private JLabel scoreLabel;
     private JLabel linesLabel;
+    private JLabel levelLabel;
 
     public GameManage getGameManage(){
         return this.gameManage;
     }
 
-    public void updateScore(int score, int lines){
+    public void updateScore(int score, int lines, int level){
         SwingUtilities.invokeLater(()->{
+        levelLabel.setText(String.valueOf(level));
         scoreLabel.setText(String.valueOf(score));
         linesLabel.setText(String.valueOf(lines));
     });
@@ -42,11 +44,15 @@ import java.awt.*;
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.setOpaque(false);
 
+        levelLabel = new JLabel("0");
         scoreLabel = new JLabel("0");
         linesLabel = new JLabel("0");
+        leftPanel.add(createUIBox("LEVEL", levelLabel));
+        leftPanel.add(Box.createVerticalStrut(20));
         leftPanel.add(createUIBox("SCORE", scoreLabel));
         leftPanel.add(Box.createVerticalStrut(20));
         leftPanel.add(createUIBox("LINES", linesLabel));
+        
 
         gbc.gridx = 0;
         gbc.gridy = 0;
